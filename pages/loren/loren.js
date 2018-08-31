@@ -28,12 +28,12 @@ Page({
   },
   callHimTap: function () {
     wx.makePhoneCall({
-      phoneNumber: '18661881639'
+      phoneNumber: ''
     })
   },
   callHerTap: function () {
     wx.makePhoneCall({
-      phoneNumber: '18653231788'
+      phoneNumber: ''
     })
   },
   phoneTap: function () {
