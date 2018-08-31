@@ -81,7 +81,51 @@ char2buf(str) {
 
 还需要对数据进行分割，这里每种数据使用||分割，使用#end作为结束标识符。设备监测到有此标识符则开始联网。
 
-[具体代码](https://github.com/Loren1994/wx-mini/blob/master/pages/bluetooth/bluetooth.js)
+~~~~javascript
+//递归
+writeData: function (devId, serviceId, charaId) {
+    var _this = this
+    if (_this.data.sendNum >= _this.data.sendDataList.length) {
+      wx.closeBLEConnection({
+        deviceId: devId,
+        success: function (res) {
+          console.log(res)
+        }
+      })
+      wx.hideLoading()
+      wx.showToast({
+        title: '发送成功',
+        icon: 'success',
+        duration: 2000
+      })
+      return
+    }
+    wx.writeBLECharacteristicValue({
+      deviceId: devId,
+      serviceId: serviceId,
+      characteristicId: charaId,
+      value: _this.data.sendDataList[_this.data.sendNum],
+      success: function (res) {
+        console.log('写入成功', res.errMsg)
+        setTimeout(function () {
+          _this.data.sendNum++
+          console.log(_this.data.sendNum)
+          _this.writeData(devId, serviceId, charaId)
+        }, 250)
+      },
+      fail: function (res) {
+        console.log(res)
+        _this.setData({
+          sendNum: 0
+        })
+      }
+    })
+  }
+~~~~
+
+
+
+[完整BLE代码](https://github.com/Loren1994/wx-mini/blob/master/pages/bluetooth/bluetooth.js)
 
 > 实际上#end和||分割存在bug，若数据中含有此类字符会导致设备端接收数据错误。此处不再深究。
 
