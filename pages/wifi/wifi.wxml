@@ -1,0 +1,14 @@
+<!--pages/wifi/wifi.wxml-->
+<view class='container'>
+   <text class='input-sugon'>Loren</text> 
+  <text class='input-title'>手机请先连接WIFI</text>
+  <view class='input-info'>
+    <image class='wifi-icon' src='../image/ic_wifi.png'></image>
+    <text bindtap='getWifiInfo'>{{wifiName}}</text>
+  </view>
+  <view class='input-info'>
+    <image class='wifi-icon' src='../image/ic_pwd.png'></image>
+    <input style='width:100%' value='{{wifiPwd}}' placeholder='请输入WiFi密码' password type='text'></input>
+  </view>
+  <button class='input-button' type='warn' bindtap='goBle'>下一步</button>
+</view>
