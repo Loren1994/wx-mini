@@ -201,24 +201,28 @@ Page({
 
   },
   getSendData: function () {
+    var Base64 = require('../../pages/js-base64/we-base64.js')
     this.setData({
       sendDataList: []
     })
     // var location = wx.getStorageSync('location').split('-')
     var lat = '0.0' //location[0]
     var lon = '0.0' //location[1]
-    var sendStr = this.data.wifiName + '||' + this.data.wifiPwd + '||' + lon + '||' + lat + '#end'
+    var sendStr = Base64.encode(this.data.wifiName) + '||' + this.data.wifiPwd + '||' + lon + '||' + lat + '#end'
     console.log('要发送的数据为:', sendStr)
     console.log('要发送的数据长度为:', sendStr.length)
     var sendCount = Math.ceil(sendStr.length / 18)
     console.log('发送的数据包数为:' + sendCount)
     var totalSendData = []
     for (let i = 0; i < sendCount; i++) {
+      let temp = ''
       if (i == sendCount - 1) {
-        totalSendData[i] = this.char2buf(sendStr.substring(sendStr.length - sendStr.length % 18))
+        temp = sendStr.substring(sendStr.length % 18 == 0 ? 18 : sendStr.length - sendStr.length % 18)
       } else {
-        totalSendData[i] = this.char2buf(sendStr.substr(i == 0 ? 0 : i * 18 - 1, 18))
+        temp = sendStr.substr(i == 0 ? 0 : i * 18, 18)
       }
+      console.log(i + '单包数据为:', temp)
+      totalSendData[i] = this.char2buf(temp)
     }
     console.log(totalSendData)
     this.setData({
@@ -253,16 +257,8 @@ Page({
     }
     return out
   },
-
-  // ArrayBuffer转16进度字符串示例
-  ab2hex: function (buffer) {
-    var hexArr = Array.prototype.map.call(
-      new Uint8Array(buffer),
-      function (bit) {
-        return ('00' + bit.toString(16)).slice(-2)
-      }
-    )
-    return hexArr.join('');
+  ab2str: function (buf) {
+    return String.fromCharCode.apply(null, new Uint8Array(buf));
   },
   /**
    * 生命周期函数--监听页面初次渲染完成

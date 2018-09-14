@@ -6,12 +6,17 @@ Page({
    */
   data: {
     wifiName: '未连接,点击重试',
-    wifiPwd: 'sugon123456'
+    wifiPwd: ''
   },
   goBle: function () {
     var _this = this
     wx.navigateTo({
       url: '../bluetooth/bluetooth?wifiName=' + _this.data.wifiName + '&wifiPwd=' + _this.data.wifiPwd
+    })
+  },
+  bindKeyInput: function (e) {
+    this.setData({
+      wifiPwd: e.detail.value
     })
   },
 

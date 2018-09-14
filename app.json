@@ -1,9 +1,5 @@
 {
   "pages": [
-    "pages/index/index",
-    "pages/logs/logs",
-    "pages/loren/loren",
-    "pages/contact/contact",
     "pages/wifi/wifi",
     "pages/bluetooth/bluetooth"
   ],

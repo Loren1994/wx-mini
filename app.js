@@ -1,3 +1,7 @@
+    // "pages/index/index",
+    // "pages/logs/logs",
+    // "pages/loren/loren",
+    // "pages/contact/contact",
 //app.js
 App({
   onLaunch: function () {
