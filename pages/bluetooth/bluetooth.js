@@ -231,13 +231,14 @@ Page({
   },
 
   getSendDataForIOS: function () {
+    var Base64 = require('../../pages/js-base64/we-base64.js')
     this.setData({
       sendDataList: []
     })
     // var location = wx.getStorageSync('location').split('-')
     var lat = '0.0' // location[0]
     var lon = '0.0' //location[1]
-    var sendStr = this.data.wifiName + '||' + this.data.wifiPwd + '||' + lon + '||' + lat + '#end'
+    var sendStr = Base64.encode(this.data.wifiName) + '||' + this.data.wifiPwd + '||' + lon + '||' + lat + '#end'
     console.log('要发送的数据为:', sendStr)
     console.log('要发送的数据长度为:', sendStr.length)
     var totalSendData = []
