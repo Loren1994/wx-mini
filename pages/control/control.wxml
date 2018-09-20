@@ -1,0 +1,5 @@
+<!--pages/control/control.wxml-->
+<view class='container'>
+  <button class='input-button' style='margin-top:10px' size='mini' type='primary' bindtap='pushTap'>{{pushText}}</button>
+  <button class='input-button' style='margin-top:10px' size='mini' type='primary' bindtap='takePhoto'>拍照</button>
+</view>

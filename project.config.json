@@ -56,6 +56,12 @@
 					"name": "WIFI",
 					"pathName": "pages/wifi/wifi",
 					"query": ""
+				},
+				{
+					"id": -1,
+					"name": "control",
+					"pathName": "pages/control/control",
+					"query": ""
 				}
 			]
 		}

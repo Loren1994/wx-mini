@@ -9,6 +9,7 @@ App({
     var logs = wx.getStorageSync('logs') || []
     logs.unshift(Date.now())
     wx.setStorageSync('logs', logs)
+    this.globalData.SystemInfo = wx.getSystemInfoSync()
 
     // 登录
     wx.login({
@@ -37,7 +38,19 @@ App({
       }
     })
   },
+  buf2hex: function (buffer) {
+    return Array.prototype.map.call(new Uint8Array(buffer), x => ('00' + x.toString(16)).slice(-2)).join('')
+  },
+  buf2string: function (buffer) {
+    var arr = Array.prototype.map.call(new Uint8Array(buffer), x => x)
+    var str = ''
+    for (var i = 0; i < arr.length; i++) {
+      str += String.fromCharCode(arr[i])
+    }
+    return str
+  },
   globalData: {
-    userInfo: null
+    userInfo: null,
+    SystemInfo: {}
   }
 })

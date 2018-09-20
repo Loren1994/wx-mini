@@ -11,4 +11,5 @@
     <input style='width:100%' bindinput="bindKeyInput"  placeholder='请输入WiFi密码' password type='text'></input>
   </view>
   <button class='input-button' type='warn' bindtap='goBle'>下一步</button>
+  <button class='input-button' style='margin-top:10px' type='default' bindtap='controlPush'>操作控制</button>
 </view>

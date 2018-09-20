@@ -1,7 +1,9 @@
 {
   "pages": [
     "pages/wifi/wifi",
-    "pages/bluetooth/bluetooth"
+    "pages/bluetooth/bluetooth",
+    "pages/control/control",
+    "pages/search/search"
   ],
   "window": {
     "backgroundTextStyle": "light",
