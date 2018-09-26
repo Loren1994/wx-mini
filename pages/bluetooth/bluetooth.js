@@ -17,7 +17,7 @@ Page({
   /**
    * 生命周期函数--监听页面加载
    */
-  onLoad: function (options) {
+  onLoad: function(options) {
     var _this = this
     _this.setData({
       wifiName: options.wifiName,
@@ -32,19 +32,19 @@ Page({
     }
     //初始化
     wx.openBluetoothAdapter({
-      success: function (res) {
+      success: function(res) {
         _this.scanBle()
       },
-      fail: function (res) {
+      fail: function(res) {
         //初始化失败
         console.log(res);
       },
-      complete: function (res) {
+      complete: function(res) {
         // 初始化完成
       }
     })
   },
-  scanBle: function () {
+  scanBle: function() {
     var _this = this
     _this.setData({
       scanDevices: []
@@ -57,7 +57,7 @@ Page({
     //扫描设备
     wx.startBluetoothDevicesDiscovery({
       services: [],
-      success: function (res) {
+      success: function(res) {
         //获取扫描到的设备
         // wx.getBluetoothDevices({
         //   success: (res) => {
@@ -75,7 +75,7 @@ Page({
         //     })
         //   }
         // })
-        wx.onBluetoothDeviceFound(function (obj) {
+        wx.onBluetoothDeviceFound(function(obj) {
           // console.dir(obj.devices[0])
           var temp = _this.data.scanDevices
           if (obj.devices[0].name) {
@@ -103,18 +103,18 @@ Page({
         //扫描失败
         console.log(res)
       },
-      complete: function (res) {
+      complete: function(res) {
         //扫描完成
         console.log(res)
       }
     })
   },
-  bleClick: function (e) {
+  bleClick: function(e) {
     var _this = this
     var devId = e.currentTarget.dataset.devid
     console.log(_this.data.scanDevices)
     wx.stopBluetoothDevicesDiscovery({
-      success: function (res) {
+      success: function(res) {
         console.log(res)
         wx.showToast({
           title: '连接中',
@@ -126,30 +126,28 @@ Page({
       }
     })
   },
-  connectBle: function (devId) {
+  connectBle: function(devId) {
     var _this = this
     //点击连接设备
     wx.createBLEConnection({
       deviceId: devId,
-      success: function (res) {
+      success: function(res) {
         console.log(res)
         var serviceId, charaId
         //获取服务
         wx.getBLEDeviceServices({
           deviceId: devId,
-          success: function (res) {
+          success: function(res) {
             console.log(res.services)
             serviceId = res.services[0].uuid
             //获取特征值
             wx.getBLEDeviceCharacteristics({
               deviceId: devId,
               serviceId: serviceId,
-              success: function (res) {
+              success: function(res) {
                 console.log('device getBLEDeviceCharacteristics:', res.characteristics)
                 charaId = res.characteristics[0].uuid
-                //向特征值写入数据
-                console.log("开始写入数据")
-                _this.writeData(devId, serviceId, charaId)
+                _this.listener(devId, serviceId, charaId)
               }
             })
           }
@@ -161,15 +159,54 @@ Page({
       }
     })
   },
-  writeData: function (devId, serviceId, charaId) {
+  listener: function(devId, serviceId, charaId) {
+    var _this = this
+    wx.notifyBLECharacteristicValueChange({
+      state: true,
+      deviceId: devId,
+      serviceId: serviceId,
+      characteristicId: charaId,
+      success: function(res) {
+        console.log(res)
+      },
+      fail(res) {
+        console.log(res);
+      }
+    })
+    wx.onBLECharacteristicValueChange(function(res) {
+      let data = _this.ab2str(res.value)
+      console.log('收到数据', data)
+      wx.showToast({
+        title: (data == 'connected') ? "联网成功" : "正在联网",
+        icon: (data == 'connected') ? 'success' : 'loading',
+        duration: 2000
+      })
+      //关闭连接
+      if (data == 'connected') {
+        wx.closeBLEConnection({
+          deviceId: devId,
+          success: function(res) {
+            console.log(res)
+          }
+        })
+      }
+    })
+    //向特征值写入数据
+    setTimeout(() => {
+      _this.writeData(devId, serviceId, charaId)
+    }, 3000)
+  },
+  writeData: function(devId, serviceId, charaId) {
+    console.log("开始写入数据")
     var _this = this
     if (_this.data.sendNum >= _this.data.sendDataList.length) {
-      wx.closeBLEConnection({
-        deviceId: devId,
-        success: function (res) {
-          console.log(res)
-        }
-      })
+      //关闭连接
+      // wx.closeBLEConnection({
+      //   deviceId: devId,
+      //   success: function(res) {
+      //     console.log(res)
+      //   }
+      // })
       wx.hideLoading()
       wx.showToast({
         title: '发送成功',
@@ -183,15 +220,15 @@ Page({
       serviceId: serviceId,
       characteristicId: charaId,
       value: _this.data.sendDataList[_this.data.sendNum],
-      success: function (res) {
+      success: function(res) {
         console.log('写入成功', res.errMsg)
-        setTimeout(function () {
+        setTimeout(function() {
           _this.data.sendNum++
-          console.log(_this.data.sendNum)
+            console.log(_this.data.sendNum)
           _this.writeData(devId, serviceId, charaId)
         }, 250)
       },
-      fail: function (res) {
+      fail: function(res) {
         console.log(res)
         _this.setData({
           sendNum: 0
@@ -200,7 +237,7 @@ Page({
     })
 
   },
-  getSendData: function () {
+  getSendData: function() {
     var Base64 = require('../../pages/js-base64/we-base64.js')
     this.setData({
       sendDataList: []
@@ -230,7 +267,7 @@ Page({
     })
   },
 
-  getSendDataForIOS: function () {
+  getSendDataForIOS: function() {
     var Base64 = require('../../pages/js-base64/we-base64.js')
     this.setData({
       sendDataList: []
@@ -258,30 +295,30 @@ Page({
     }
     return out
   },
-  ab2str: function (buf) {
+  ab2str: function(buf) {
     return String.fromCharCode.apply(null, new Uint8Array(buf));
   },
   /**
    * 生命周期函数--监听页面初次渲染完成
    */
-  onReady: function () {
+  onReady: function() {
 
   },
 
   /**
    * 生命周期函数--监听页面显示
    */
-  onShow: function () {
+  onShow: function() {
 
   },
 
   /**
    * 生命周期函数--监听页面隐藏
    */
-  onHide: function () {
+  onHide: function() {
     console.log(">>>onHide")
     wx.stopBluetoothDevicesDiscovery({
-      success: function (res) {
+      success: function(res) {
         console.log(res)
       }
     })
@@ -290,10 +327,10 @@ Page({
   /**
    * 生命周期函数--监听页面卸载
    */
-  onUnload: function () {
+  onUnload: function() {
     console.log(">>>onUnload")
     wx.stopBluetoothDevicesDiscovery({
-      success: function (res) {
+      success: function(res) {
         console.log(res)
       }
     })
@@ -302,21 +339,21 @@ Page({
   /**
    * 页面相关事件处理函数--监听用户下拉动作
    */
-  onPullDownRefresh: function () {
+  onPullDownRefresh: function() {
 
   },
 
   /**
    * 页面上拉触底事件的处理函数
    */
-  onReachBottom: function () {
+  onReachBottom: function() {
 
   },
 
   /**
    * 用户点击右上角分享
    */
-  onShareAppMessage: function () {
+  onShareAppMessage: function() {
 
   }
 })

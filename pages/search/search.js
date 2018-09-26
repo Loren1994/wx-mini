@@ -12,20 +12,7 @@ Page({
    * 生命周期函数--监听页面加载
    */
   onLoad: function(options) {
-    var _this = this
-    //初始化
-    wx.openBluetoothAdapter({
-      success: function(res) {
-        _this.scanBle()
-      },
-      fail: function(res) {
-        //初始化失败
-        console.log(res);
-      },
-      complete: function(res) {
-        // 初始化完成
-      }
-    })
+    this.scanBle()
   },
 
   scanBle: function() {
@@ -38,41 +25,53 @@ Page({
       icon: 'loading',
       duration: 2000
     })
-    //扫描设备
-    wx.startBluetoothDevicesDiscovery({
-      services: [],
+    //初始化
+    wx.openBluetoothAdapter({
       success: function(res) {
-        wx.onBluetoothDeviceFound(function(obj) {
-          // console.dir(obj.devices[0])
-          var temp = _this.data.scanDevices
-          if (obj.devices[0].name) {
-            obj.devices.map(dev => {
-              let pDev = temp.find((it) => {
-                return it.deviceId == dev.deviceId
-              })
-              if (!pDev) {
-                temp.push(dev)
+        //扫描设备
+        wx.startBluetoothDevicesDiscovery({
+          services: [],
+          success: function(res) {
+            wx.onBluetoothDeviceFound(function(obj) {
+              // console.dir(obj.devices[0])
+              var temp = _this.data.scanDevices
+              if (obj.devices[0].name) {
+                obj.devices.map(dev => {
+                  let pDev = temp.find((it) => {
+                    return it.deviceId == dev.deviceId
+                  })
+                  if (!pDev) {
+                    temp.push(dev)
+                  }
+                })
               }
+              _this.setData({
+                scanDevices: temp
+              })
             })
+          },
+          fail: (res) => {
+            wx.hideLoading()
+            wx.showToast({
+              title: '扫描失败',
+              icon: 'success',
+              duration: 2000
+            })
+            //扫描失败
+            console.log(res)
+          },
+          complete: function(res) {
+            //扫描完成
+            console.log(res)
           }
-          _this.setData({
-            scanDevices: temp
-          })
         })
       },
-      fail: (res) => {
-        wx.hideLoading()
-        wx.showToast({
-          title: '扫描失败',
-          icon: 'success',
-          duration: 2000
-        })
-        //扫描失败
-        console.log(res)
+      fail: function(res) {
+        //初始化失败
+        console.log(res);
       },
       complete: function(res) {
-        //扫描完成
-        console.log(res)
+        // 初始化完成
       }
     })
   },

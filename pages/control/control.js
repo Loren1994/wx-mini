@@ -9,7 +9,8 @@ Page({
     isPush: "0",
     pushText: "推流",
     serviceId: "",
-    charaId: ""
+    charaId: "",
+    isReConnect: true
   },
 
   /**
@@ -26,7 +27,7 @@ Page({
         wx.onBLEConnectionStateChange(function(res) {
           console.log('onBLEConnectionStateChanges', res)
           //断开重连
-          if (!res.connected) {
+          if (_this.data.isReConnect && !res.connected) {
             _this.connectBle(res.deviceId)
           }
         })
@@ -104,11 +105,18 @@ Page({
     wx.onBLECharacteristicValueChange(function(res) {
       console.log('收到数据', _this.ab2str(res.value))
       _this.setData({
-        isPush: _this.ab2str(res.value)
+        isPush: _this.ab2str(res.value),
       })
       _this.setData({
         pushText: _this.data.isPush == "0" ? "推流" : "停止"
       })
+      if (_this.data.isPush == "1") {
+        wx.showToast({
+          title: "开始推流",
+          icon: 'success',
+          duration: 2000
+        })
+      }
     })
   },
   pushTap: function() {
@@ -119,6 +127,22 @@ Page({
       serviceId: _this.data.serviceId,
       characteristicId: _this.data.charaId,
       value: _this.char2buf(`${_this.data.isPush}#push`),
+      success: function(res) {
+        console.log('写入成功', res)
+      },
+      fail: function(res) {
+        console.log(res)
+      }
+    })
+  },
+  takePhoto: function() {
+    console.log('拍照控制')
+    var _this = this
+    wx.writeBLECharacteristicValue({
+      deviceId: _this.data.devId,
+      serviceId: _this.data.serviceId,
+      characteristicId: _this.data.charaId,
+      value: _this.char2buf("1#photo"),
       success: function(res) {
         console.log('写入成功', res)
       },
@@ -167,6 +191,9 @@ Page({
    */
   onUnload: function() {
     console.log(">>>onUnload")
+    this.setData({
+      isReConnect: false
+    })
     wx.closeBluetoothAdapter({
       success: function(res) {
         console.log(res)
