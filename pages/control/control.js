@@ -7,10 +7,19 @@ Page({
   data: {
     devId: "",
     isPush: "0",
-    pushText: "推流",
+    pushText: "开始推流",
     serviceId: "",
     charaId: "",
-    isReConnect: true
+    isReConnect: true,
+    slideValue: 0,
+    isInit: true,
+    checkBtn: 0,
+    ipAddress: '',
+    sendIpList: [],
+    sendNum: 0,
+    bleName: "",
+    bleNameList: [],
+    bleSendNum: 0
   },
 
   /**
@@ -19,7 +28,8 @@ Page({
   onLoad: function(options) {
     var _this = this
     _this.setData({
-      devId: options.devId
+      devId: options.devId,
+      bleName: options.bleName
     })
     //初始化
     wx.openBluetoothAdapter({
@@ -42,12 +52,32 @@ Page({
       }
     })
   },
+  bindIpInput: function(e) {
+    this.setData({
+      ipAddress: e.detail.value
+    })
+  },
+  bindBleInput: function(e) {
+    this.setData({
+      bleName: e.detail.value
+    })
+  },
+  listenerSlider: function(e) {
+    console.log(e.detail.value);
+    this.setData({
+      slideValue: e.detail.value
+    })
+    this.controlBright(e.detail.value)
+  },
   connectBle: function(devId) {
     var _this = this
     wx.showToast({
       title: '连接中',
       icon: 'loading',
       duration: 2000
+    })
+    _this.setData({
+      isInit: true
     })
     //点击连接设备
     wx.createBLEConnection({
@@ -104,12 +134,18 @@ Page({
     })
     wx.onBLECharacteristicValueChange(function(res) {
       console.log('收到数据', _this.ab2str(res.value))
+      let pushTemp = _this.ab2str(res.value).split("#")[0]
+      let brightTemp = _this.ab2str(res.value).split("#")[1]
       _this.setData({
-        isPush: _this.ab2str(res.value),
+        isPush: pushTemp,
+        pushText: pushTemp == "0" ? "开始推流" : "停止推流"
       })
-      _this.setData({
-        pushText: _this.data.isPush == "0" ? "推流" : "停止"
-      })
+      if (_this.data.isInit) {
+        _this.setData({
+          isInit: false,
+          slideValue: brightTemp,
+        })
+      }
       if (_this.data.isPush == "1") {
         wx.showToast({
           title: "开始推流",
@@ -121,7 +157,15 @@ Page({
   },
   pushTap: function() {
     console.log('推流控制')
+    wx.showToast({
+      title: '请稍候',
+      icon: 'loading',
+      duration: 2000
+    })
     var _this = this
+    _this.setData({
+      checkBtn: 0
+    })
     wx.writeBLECharacteristicValue({
       deviceId: _this.data.devId,
       serviceId: _this.data.serviceId,
@@ -135,9 +179,168 @@ Page({
       }
     })
   },
+  controlBright: function(brightValue) {
+    console.log('控制亮度')
+    var _this = this
+    wx.writeBLECharacteristicValue({
+      deviceId: _this.data.devId,
+      serviceId: _this.data.serviceId,
+      characteristicId: _this.data.charaId,
+      value: _this.char2buf(`${brightValue}#bright`),
+      success: function(res) {
+        console.log('写入成功', res)
+      },
+      fail: function(res) {
+        console.log(res)
+      }
+    })
+  },
+  bleNameTap: function() {
+    console.log('待发送的蓝牙名称', this.data.bleName)
+    var Base64 = require('../../pages/js-base64/we-base64.js')
+    let sendStr = `${Base64.encode(this.data.bleName)}#bleName`
+    let bleDataList = []
+    console.log('要发送的数据为:', sendStr)
+    console.log('要发送的数据长度为:', sendStr.length)
+    let sendCount = Math.ceil(sendStr.length / 18)
+    console.log('数据包数量', sendCount)
+    if (wx.getSystemInfoSync()['platform'] != 'android' || sendCount == 1) {
+      bleDataList[0] = this.char2buf(sendStr)
+    } else {
+      for (let i = 0; i < sendCount; i++) {
+        let temp = ''
+        if (i == sendCount - 1) {
+          temp = sendStr.substring(sendStr.length % 18 == 0 ? 18 : sendStr.length - sendStr.length % 18)
+        } else {
+          temp = sendStr.substr(i == 0 ? 0 : i * 18, 18)
+        }
+        console.log(i + '单包数据为:', temp)
+        bleDataList[i] = this.char2buf(temp)
+      }
+    }
+    this.setData({
+      bleNameList: bleDataList
+    })
+    wx.showToast({
+      title: '正在发送',
+      icon: 'loading',
+      duration: 2000
+    })
+    setTimeout(() => {
+      this.writeBleName()
+    }, 3000)
+  },
+  writeBleName: function() {
+    var _this = this
+    if (_this.data.bleSendNum >= _this.data.bleNameList.length) {
+      wx.hideLoading()
+      wx.showToast({
+        title: '发送成功',
+        icon: 'success',
+        duration: 2000
+      })
+      _this.setData({
+        bleSendNum: 0
+      })
+      wx.navigateBack({
+        delta: 1
+      })
+      return
+    }
+    wx.writeBLECharacteristicValue({
+      deviceId: _this.data.devId,
+      serviceId: _this.data.serviceId,
+      characteristicId: _this.data.charaId,
+      value: _this.data.bleNameList[_this.data.bleSendNum],
+      success: function(res) {
+        console.log('写入成功', res)
+        setTimeout(function() {
+          _this.data.bleSendNum++
+            console.log(_this.data.bleSendNum)
+          _this.writeBleName()
+        }, 250)
+      },
+      fail: function(res) {
+        console.log(res)
+        _this.setData({
+          bleSendNum: 0
+        })
+      }
+    })
+  },
+  sendIp: function() {
+    console.log('发送IP地址_分包')
+    let ipDataList = []
+    let dataTemp = `${this.data.ipAddress}#ip`
+    let sendCount = Math.ceil(dataTemp.length / 18)
+    console.log('要发送的数据为:', dataTemp)
+    console.log('要发送的数据包为:', sendCount)
+    if (wx.getSystemInfoSync()['platform'] != 'android' || sendCount == 1) {
+      ipDataList[0] = dataTemp
+    } else {
+      ipDataList[0] = dataTemp.substr(0, 18)
+      console.log("第1个包", ipDataList[0])
+      ipDataList[1] = dataTemp.substring(dataTemp.length - dataTemp.length % 18)
+      console.log("第2个包", ipDataList[1])
+    }
+    this.setData({
+      sendIpList: ipDataList
+    })
+    wx.showToast({
+      title: '正在发送',
+      icon: 'loading',
+      duration: 2000
+    })
+    setTimeout(() => {
+      this.writeIP()
+    }, 3000)
+  },
+  writeIP: function() {
+    var _this = this
+    if (_this.data.sendNum >= _this.data.sendIpList.length) {
+      wx.hideLoading()
+      wx.showToast({
+        title: '发送成功',
+        icon: 'success',
+        duration: 2000
+      })
+      _this.setData({
+        sendNum: 0
+      })
+      return
+    }
+    wx.writeBLECharacteristicValue({
+      deviceId: _this.data.devId,
+      serviceId: _this.data.serviceId,
+      characteristicId: _this.data.charaId,
+      value: _this.char2buf(_this.data.sendIpList[_this.data.sendNum]),
+      success: function(res) {
+        console.log('写入成功', res)
+        setTimeout(function() {
+          _this.data.sendNum++
+            console.log(_this.data.sendNum)
+          _this.writeIP()
+        }, 250)
+      },
+      fail: function(res) {
+        console.log(res)
+        _this.setData({
+          sendNum: 0
+        })
+      }
+    })
+  },
   takePhoto: function() {
     console.log('拍照控制')
+    wx.showToast({
+      title: '请稍候',
+      icon: 'loading',
+      duration: 1000
+    })
     var _this = this
+    _this.setData({
+      checkBtn: 1
+    })
     wx.writeBLECharacteristicValue({
       deviceId: _this.data.devId,
       serviceId: _this.data.serviceId,

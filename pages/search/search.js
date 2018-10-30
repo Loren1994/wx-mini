@@ -77,13 +77,15 @@ Page({
   },
   bleClick: function(e) {
     var _this = this
-    var devId = e.currentTarget.dataset.devid
-    console.log(_this.data.scanDevices)
+    var devId = e.currentTarget.dataset.item.deviceId
+    var bleName = e.currentTarget.dataset.item.name
+    console.log('点击name', bleName)
+    console.log('点击id', devId)
     wx.stopBluetoothDevicesDiscovery({
       success: function(res) {
         console.log(res)
-        wx.navigateTo({
-          url: '../control/control?devId=' + devId
+        wx.redirectTo({
+          url: `../control/control?devId=${devId}&bleName=${bleName}`
         })
       }
     })

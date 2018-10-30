@@ -3,7 +3,7 @@
   <button style='width:80%;margin-top:10px' bindtap='scanBle' plain='true' size='mini' type='primary'>重新扫描</button>
   <view style="width:100%;margin-top:20px">
     <view class='item-body' wx:for="{{scanDevices}}" wx:key="deviceId">
-      <view bindtap='bleClick' data-devid="{{item.deviceId}}" class='item-text'>
+      <view bindtap='bleClick' data-item="{{item}}" class='item-text'>
         {{item.name}}</view>
     </view>
   </view>

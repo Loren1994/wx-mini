@@ -187,6 +187,9 @@ Page({
           deviceId: devId,
           success: function(res) {
             console.log(res)
+            wx.navigateBack({
+              delta: 1
+            })
           }
         })
       }

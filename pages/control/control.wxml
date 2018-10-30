@@ -1,5 +1,26 @@
 <!--pages/control/control.wxml-->
 <view class='container'>
-  <button class='input-button' style='margin-top:10px' size='mini' type='primary' bindtap='pushTap'>{{pushText}}</button>
-  <button class='input-button' style='margin-top:10px' size='mini' type='primary' bindtap='takePhoto'>拍照</button>
+  <view style='width:80%;margin-top:10px;'>
+    <text style='font-size:14px;color:grey;'>设置亮度</text>
+  </view>
+  <slider style='width:80%;margin-top:10px;' bindchange="listenerSlider" min="1" max="255" value='{{slideValue}}' />
+  <view class='btn-container'>
+    <button class="{{checkBtn==0?'input-button-check':'input-button'}}" size='mini' bindtap='pushTap'>{{pushText}}</button>
+    <button class="{{checkBtn==1?'input-button-check':'input-button'}}" size='mini' bindtap='takePhoto'>拍照</button>
+  </view>
+  <view style='width:80%;margin-top:20px;'>
+    <text style='font-size:14px;color:grey;'>修改设备蓝牙名称 (需重新连接)</text>
+  </view>
+  <view class='ip-container'>
+    <input maxlength='23' class='ip-input' bindinput='bindBleInput' value='{{bleName}}' type="text" placeholder="请输入名称" />
+    <button class='ip-btn' bindtap='bleNameTap' size='mini'>确定</button>
+  </view>
+  <!-- 测试阶段用 -->
+  <view style='width:80%;margin-top:20px;'>
+    <text style='font-size:14px;color:grey;'>设置推流服务器</text>
+  </view>
+  <view class='ip-container'>
+    <input maxlength='21' class='ip-input' bindinput='bindIpInput' type="text" placeholder="请输入服务器地址" />
+    <button class='ip-btn' bindtap='sendIp' size='mini'>确定</button>
+  </view>
 </view>
