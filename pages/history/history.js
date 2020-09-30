@@ -6,12 +6,14 @@ Page({
    */
   data: {
     historyList: [{
+      id:1,
         name: "张三",
         phone: "18612341234",
         product: "直销净值001",
         money: "20000元"
       },
       {
+        id:2,
         name: "李四",
         phone: "13305321234",
         product: "直销净值002",
