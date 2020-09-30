@@ -1,0 +1,29 @@
+/* pages/history/history.wxss */
+.item-container {
+  display: flex;
+  flex-direction: column;
+  background-color: white;
+  border-radius: 10px;
+  margin: 4px 8px 4px 8px;
+  box-shadow: 0px 0px 2px 2px whitesmoke;
+}
+
+.item-title{
+  border-radius: 10px 10px 0px 0px;
+  background-color: orange;
+  color: whitesmoke;
+  padding:  8px 12px 8px 12px;
+  font-size: smaller;
+  text-align: justify;
+}
+
+.text-item {
+  font-size: medium;
+  padding: 8px 20px 8px 20px;
+}
+.text-content {
+  font-size: medium;
+  padding: 4px 8px 4px 8px;
+  color: grey;
+  margin-left: 16px;
+}

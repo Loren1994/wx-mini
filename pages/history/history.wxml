@@ -1,0 +1,18 @@
+<!--pages/history/history.wxml-->
+<view wx:for="{{historyList}}" class="item-container">
+  <view class="item-title">
+    <icon style="margin:0px 8px 2px 0px;" type="info" size="16" color="whitesmoke"></icon>预约成功
+  </view>
+  <view class="text-item">姓名
+    <text class="text-content">{{item.name}}</text>
+  </view>
+  <view class="text-item">手机号
+    <text class="text-content">{{item.phone}}</text>
+  </view>
+  <view class="text-item">产品名称
+    <text class="text-content">{{item.product}}</text>
+  </view>
+  <view class="text-item">预约金额
+    <text class="text-content">{{item.money}}</text>
+  </view>
+</view>

@@ -1,0 +1,13 @@
+/* pages/order/order.wxss */
+.page-body {
+  padding: 10px 0;
+}
+
+.page-section {
+  margin-bottom: 10px;
+}
+
+.weui-cells__title{
+  padding: 8px 8px 8px 8px;
+  margin: 0px 0px 0px 0px;
+}
