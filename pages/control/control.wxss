@@ -1,0 +1,75 @@
+/* pages/control/control.wxss */
+
+.container {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  padding-top: 0px;
+}
+
+.input-button {
+  width: 40%;
+  margin-top: 10px;
+}
+
+.input-button-check {
+  width: 40%;
+  margin-top: 10px;
+  background-color: red;
+  color: white;
+}
+
+.btn-container {
+  width: 90%;
+  display: flex;
+  flex-direction: row;
+  margin-top: 10px;
+}
+
+.loren-container {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  box-sizing: border-box;
+  width: 100%;
+}
+
+.item-body {
+  padding-left: 16px;
+  padding-right: 16px;
+  margin-left: 16px;
+  margin-right: 16px;
+  border-bottom: 1px solid grey;
+}
+
+.item-text {
+  padding-top: 10px;
+  padding-bottom: 10px;
+  color: red;
+}
+
+.ip-container {
+  width: 85%;
+  display: flex;
+  flex-direction: row;
+  margin-top: 10px;
+  align-items: center;
+}
+
+.ip-input {
+  width: 80%;
+  font-size: 14px;
+  background-color: #f0f0eb;
+  padding-left: 10px;
+  padding-right: 10px;
+  padding-top: 2px;
+  padding-bottom: 2px;
+}
+
+.ip-btn {
+  width: 20%;
+  margin-right: 5px;
+}
