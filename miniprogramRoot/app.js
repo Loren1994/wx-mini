@@ -2,6 +2,13 @@
     // "pages/logs/logs",
     // "pages/loren/loren",
     // "pages/contact/contact",
+
+    // "pages/loren/loren",
+    // "pages/contact/contact",
+    // "pages/wifi/wifi",
+    // "pages/bluetooth/bluetooth",
+    // "pages/control/control",
+    // "pages/search/search"
 //app.js
 App({
   onLaunch: function () {

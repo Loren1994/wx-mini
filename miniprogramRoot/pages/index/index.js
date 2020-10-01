@@ -29,7 +29,7 @@ Page({
     wx.cloud.callFunction({
       name: 'login',
       complete: res => {
-        console.log('callFunction test result: ', res.result.openid)
+        console.log('callFunction login result: ', res)
         // wx.setStorage({
         //   key: "openid",
         //   data: res.result.openid
@@ -37,7 +37,7 @@ Page({
         if (e.detail.userInfo) {
           console.log("进入预约")
           wx.navigateTo({
-            url: `../order/order?openid=${res.result.openid}`,
+            url: `../order/order?openid=${res.result.OPENID}`,
           })
         }
       }
@@ -48,9 +48,9 @@ Page({
     wx.cloud.callFunction({
       name: 'login',
       complete: res => {
-        console.log('callFunction test result: ', res.result.openid)
+        console.log('callFunction login result: ', res)
         wx.navigateTo({
-          url: `../history/history?openid=${res.result.openid}`,
+          url: `../history/history?openid=${res.result.OPENID}`,
         })
       }
     })

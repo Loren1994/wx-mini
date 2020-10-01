@@ -95,8 +95,8 @@
           "query": ""
         },
         {
-          "id": -1,
-          "name": "pages/index/index",
+          "id": 5,
+          "name": "预约首页",
           "pathName": "pages/index/index",
           "query": "",
           "scene": null
@@ -112,6 +112,7 @@
           "id": -1,
           "name": "pages/history/history",
           "pathName": "pages/history/history",
+          "query": "",
           "scene": null
         }
       ]
