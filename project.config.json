@@ -1,4 +1,11 @@
 {
+  "permissions": {
+    "openapi": [
+      "templateMessage.send"
+    ]
+  },
+  "cloudfunctionRoot": "cloudfunctions/",
+  "miniprogramRoot": "miniprogramRoot/",
   "description": "项目配置文件。",
   "setting": {
     "urlCheck": false,
@@ -25,12 +32,13 @@
     "packNpmRelationList": []
   },
   "compileType": "miniprogram",
-  "libVersion": "2.0.4",
+  "libVersion": "2.11.2",
   "appid": "wx63f8168536e459df",
   "projectname": "mini-project",
   "isGameTourist": false,
   "simulatorType": "wechat",
   "simulatorPluginLibVersion": {},
+  "cloudfunctionTemplateRoot": "cloudfunctionTemplate",
   "condition": {
     "search": {
       "current": -1,

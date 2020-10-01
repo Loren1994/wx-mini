@@ -1,49 +1,30 @@
-// pages/order/order.js
+// pages/history/history.js
 Page({
 
   /**
    * 页面的初始数据
    */
   data: {
-    productList: ['封闭式净值2020', '因客周期净值002', '直销开放T1净值', '开放式净值001'],
-    productIndex: 0,
-    moneyList: ['20000元', '15000元', '10000元', '5000元'],
-    moneyIndex: 0,
-    isLoading: false,
+    historyList: []
   },
 
   /**
    * 生命周期函数--监听页面加载
    */
   onLoad: function (options) {
-
-  },
-
-  bindProductChange: function (e) {
-    console.log('bindProductChange', e.detail.value)
-    this.setData({
-      productIndex: e.detail.value
+    let thiz = this
+    wx.cloud.callFunction({
+      name: 'getorder',
+      data: {
+        openid: options.openid,
+      },
+      complete(res) {
+        console.log(res)
+        thiz.setData({
+          historyList: res.result.data
+        })
+      }
     })
-  },
-  bindMoneyChange: function (e) {
-    console.log('bindMoneyChange', e.detail.value)
-    this.setData({
-      moneyIndex: e.detail.value
-    })
-  },
-  // 提交
-  submit() {
-    wx.showLoading({
-      title: '正在提交',
-    })
-    setTimeout(function () {
-      wx.hideLoading()
-      wx.showToast({
-        title: '提交成功',
-        icon: 'success',
-        duration: 2000
-      })
-    }, 2000)
   },
 
   /**

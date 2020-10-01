@@ -2,6 +2,7 @@
 <view wx:for="{{historyList}}" wx:key="id" class="item-container">
   <view class="item-title">
     <icon style="margin:0px 8px 2px 0px;" type="info" size="16" color="whitesmoke"></icon>预约成功
+    <text class="title-right">{{item.time}}</text>
   </view>
   <view class="text-item">姓名
     <text class="text-content">{{item.name}}</text>

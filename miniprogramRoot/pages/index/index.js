@@ -1,6 +1,7 @@
 //index.js
 //获取应用实例
 const app = getApp()
+wx.cloud.init()
 
 Page({
   data: {
@@ -25,17 +26,33 @@ Page({
   //我要预约
   bindGetUserInfo(e) {
     console.log(e.detail.userInfo)
-    if (e.detail.userInfo) {
-      console.log("进入预约")
-      wx.navigateTo({
-        url: '../order/order',
-      })
-    }
+    wx.cloud.callFunction({
+      name: 'login',
+      complete: res => {
+        console.log('callFunction test result: ', res.result.openid)
+        // wx.setStorage({
+        //   key: "openid",
+        //   data: res.result.openid
+        // })
+        if (e.detail.userInfo) {
+          console.log("进入预约")
+          wx.navigateTo({
+            url: `../order/order?openid=${res.result.openid}`,
+          })
+        }
+      }
+    })
   },
   //预约历史
   bindHistory() {
-    wx.navigateTo({
-      url: '../history/history',
+    wx.cloud.callFunction({
+      name: 'login',
+      complete: res => {
+        console.log('callFunction test result: ', res.result.openid)
+        wx.navigateTo({
+          url: `../history/history?openid=${res.result.openid}`,
+        })
+      }
     })
   },
   // 打开权限设置页提示框
